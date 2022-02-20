@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import os
 import time
 import psutil
 import math
@@ -53,8 +54,7 @@ def get_power():
     clock = get_clock()/1000
     return clock*(1 + clock)*5
 
-
-if __name__ == '__main__':
+def main():
     delta = Target - get_temp()
     inte = (get_power() - delta*Kp)/Ki
     d_ = delta
@@ -76,3 +76,24 @@ if __name__ == '__main__':
             inte += delta
         print(f'{-delta:+2.0f}, {power:4.1f}, {c:4.0f}')
         time.sleep(1)
+
+def Is_ready_running():
+    thepid = os.getpid()
+    for pid in psutil.pids():
+        p = psutil.Process(pid)
+        try:
+            name = p.name()
+        except Exception:
+            pass
+        else:
+            if name == 'cpupid.py' and pid != thepid:
+                return pid
+    return None
+
+
+if __name__ == '__main__':
+    r = Is_ready_running()
+    if r is not None:
+        print(f'same name program is running, PID={r}')
+    else:
+        main()
