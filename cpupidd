@@ -1,0 +1,13 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:       run_cpupid
+# Required-Start: cpufrequtils
+# Required-Stop:
+# Default-Start:  2 3 4 5
+# Default-Stop:
+# Short-Description: CPU Temp
+# Description: use PID control CPU Temp
+### END INIT INFO
+#
+
+/usr/bin/cpupid.py
