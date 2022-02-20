@@ -6,6 +6,7 @@ import math
 N = 4
 m = 800
 M = 2800
+pmin = 50
 
 Target = 72
 Kp = 2
@@ -14,7 +15,7 @@ Kd = 0.5
 
 def get_temp():
     temps = psutil.sensors_temperatures()
-    return temps['acpitz'][0].current
+    return temps['coretemp'][0].current
 
 def set_clock(MHz):
     kHz = int(MHz*1000)
@@ -57,7 +58,10 @@ if __name__ == '__main__':
     delta = Target - get_temp()
     inte = (get_power() - delta*Kp)/Ki
     d_ = delta
+    c = 10000
     while True:
+        while psutil.cpu_percent() < pmin and get_clock() >= c-200:
+            time.sleep(0.5)
         now = get_temp()
         delta = Target - now
         diff = delta - d_
