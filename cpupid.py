@@ -1,14 +1,28 @@
 #!/usr/bin/python3
+"""
+CPU temperature PID controller
+The program *must* run in root user.
+
+Tested it on this environment:
+Computer: Lenovo-Y50-70 Laptop
+CPU: Intel(R) Core(TM) i5-4200H CPU @ 2.80GHz
+OS: Ubuntu 20.04 LTS
+Load: BOINC Client 7.16.6
+"""
 import os
 import time
 import psutil
 import math
 
-N = 4
-m = 800
-M = 2800
-pmin = 50
 
+# CPU params
+N = psutil.cpu_count(logical=True)
+pmin = psutil.cpu_count(logical=False)/N*100
+# please edit Freq(MHz) for your computer
+m = 800   # min
+M = 2800  # max
+
+# PID params
 Target = 72
 Kp = 2
 Ki = 0.75
@@ -33,8 +47,11 @@ def get_clock():
         return m + 100
     return f
 
+# I did't find way to get CPU Voltage, so estimate Power only by Frequency.
+# This parameters isn't measurement, it's estimated by TDP.
 # P = f*(1 + f)*5
 # f = (sqrt(1 + 4*P/5) - 1)/2
+# units f:GHz, P:W
 def set_power(x):
     if x < 0:
         x = 0
